@@ -1,8 +1,6 @@
 #define REAPERAPI_IMPLEMENT
 
-//#include <windows.h>
-//#include <stdio.h>
-//#include <math.h>
+#include <windows.h>
 #include <cstdlib>
 #include <ctime>
 #include <cstdio>
@@ -23,6 +21,20 @@ extern "C"
     bool _runCommand(int command, int flag);
     void _onExit(void);
 
+
+    int _regAction(int uniqueSectionId, const char* idStr, const char* name)
+    {
+        // static custom_action_register_t s;
+        // memset(&s, 0, sizeof(custom_action_register_t));
+        // s.idStr = pCommand->id;
+        // s.name = pCommand->accel.desc;
+        // s.uniqueSectionId = pCommand->uniqueSectionId;
+        // cmdId = plugin_register("custom_action", (void*)&s); // will re-use the known cmd ID, if any
+    }
+
+
+
+
     REAPER_PLUGIN_HINSTANCE _hInstance; // used for dialogs, if any
 
     // REAPER extensions must support this entry function:
@@ -39,9 +51,9 @@ extern "C"
         // else good to go
         REAPERAPI_LoadAPI(rec->GetFunc);
 
-        _logIt(">>>>>>>>>>>>>>>>");
+        _logIt(">>>>>>>>>>>>>>>>\n");
 
-        // Init my command handlers.
+        ///// Init my reaper command handlers.
         // Refer to reaper_plugin_info_t in reaper-sdk\sdk\reaper_plugin.h.
         // See also reaper-sdk\sdk\example_m3u\import_m3u.cpp
         // Register() is also available by using GetFunc("plugin_register")
@@ -52,10 +64,39 @@ extern "C"
         rec->Register("ext_vendor", (void*)"Ephemera");
         rec->Register("ext_url", (void*)"https://github.com/cepthomas/ReaperLab/blob/main/README.md");
 
-        char buff[100];
-        std::snprintf(buff, 100, "Loaded reaper_test_extension ver:%s", __TIME__);
-        _debugIt(buff);
-        _logIt(buff);
+
+        ///// Init my commands.
+
+
+        // /*
+        // ** custom_action_register_t allows you to register ("custom_action") an action or a reascript into a section of the action list
+        // ** register("custom_action",ca) will return the command ID (instance-dependent but unique across all sections), 
+        // ** or 0 if failed (e.g dupe idStr for actions, or script not found/supported, etc)
+        // ** for actions, the related callback should be registered with "hookcommand2"
+        // */
+        // typedef struct _REAPER_custom_action_register_t
+        // {
+        //   int uniqueSectionId; // 0/100=main/main alt, 32063=media explorer, 32060=midi editor, 32061=midi event list editor, 32062=midi inline editor, etc
+        //   const char* idStr; // must be unique across all sections for actions, NULL for reascripts (automatically generated)
+        //   const char* name; // name as it is displayed in the action list, or full path to a reascript file
+        //   void *extra; // reserved for future use
+        // } custom_action_register_t;
+
+        // void regit()
+        // {
+        //     static custom_action_register_t s;
+        //     memset(&s, 0, sizeof(custom_action_register_t));
+        //     s.idStr = pCommand->id;
+        //     s.name = pCommand->accel.desc;
+        //     s.uniqueSectionId = pCommand->uniqueSectionId;
+        //     cmdId = plugin_register("custom_action", (void*)&s); // will re-use the known cmd ID, if any
+        // }
+
+
+        std::stringstream ss;
+        ss << "Loaded reaper_test_extension ver:" << __TIME__ << std::endl;
+        _debugIt(ss.str());
+        _logIt(ss.str());
 
         return 1;
     }
@@ -67,7 +108,7 @@ extern "C"
         // MessageBox(nullptr, "reaper_test_extension says", buff, 0);
     }
 
-    //void LogIt(const char* msg)
+    // Log line, adds NL.
     void _logIt(std::string msg)
     {
         // Write to file.
@@ -84,7 +125,7 @@ extern "C"
     // Hook which runs prior to every action in the main section:
     bool _runCommand(int command, int flag)
     {
-        //It is OK to call Main_OnCommand() from runCommand(), but it must check for and handle any recursion.
+        // It is OK to call Main_OnCommand() from runCommand(), but it must check for and handle any recursion.
         std::stringstream ss;
         ss << "command:" << command << " flag:" << flag;
         _logIt(ss.str());
@@ -92,7 +133,7 @@ extern "C"
         return false;
     }
 
-    //    Receive a notification that REAPER is about to quit (prior to main window being destroyed).
+    // Receive a notification that REAPER is about to quit (prior to main window being destroyed).
     void _onExit(void)
     {
         _logIt("Adios!");
