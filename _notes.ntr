@@ -1,0 +1,93 @@
+
+# Top
+
+! https://github.com/NablaTools/Nabla
+
+? MK Slicer
+
+https://www.youtube.com/watch?v=QENZ0_Pywx4
+
+REAPER's arrangement view
+Region Management: Use regions to structure your song. Hold Shift while dragging in the timeline to create a region. You can then drag, reorder, or duplicate these regions to instantly rearrange your entire track.
+Inline MIDI Editing: Press E on your keyboard to open the MIDI inline editor, allowing you to edit MIDI notes and CCs directly in the arrange view without opening a separate piano roll window.
+Navigator Window: If you need a bird's-eye overview of your whole project, press Ctrl + Alt + V to open the Navigator window, which lets you click and drag to jump around massive sessions
+
+
+# extension authoring
+
+C/C++
+
+https://github.com/justinfrankel/reaper-sdk
+
+C:\Dev\Reaper\reaper-sdk\reaper-plugins contains some very vague examples. I hacked my-stab and it builds but it is murky.
+From https://github.com/justinfrankel/reaper-sdk.
+
+Better to use SWS code as example. Install from https://standingwaterstudios.com/index.php.
+Goes in C:\Users\cepth\AppData\Roaming\REAPER
+See Building the SWS Extension - https://github.com/reaper-oss/sws/wiki/Building-the-SWS-Extension
+
+- Clone the repository and submodules
+git clone --recursive https://github.com/reaper-oss/sws
+cd sws
+tgit: Submodule update
+
+- Create a build tree (requires php)
+cmake -B build -DCMAKE_BUILD_TYPE=Debug
+     -DBUILD_SWS_PYTHON=NO # don't build py support which needs perl
+
+- Open C:\Dev\Reaper\sws\build\sws.slnx
+
+
+> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> NOT
+1. Create a parent workspace directory
+mkdir sws-workspace
+cd sws-workspace
+2. Clone WDL and SWS into your workspace
+git clone http://cockos.com
+git clone https://github.com
+3. Initialize necessary SWS submodules
+cd sws
+git submodule update --init vendor/taglib
+4. Create your build directory and link your WDL path
+mkdir build
+cd build
+cmake .. -DWDL_INCLUDE_DIR=../../WDL/
+5. Compile the extension
+make
+
+
+# etc
+
+? Other UI (https://sws-extension.org/ Needed)
+    https://forum.cockos.com/showthread.php?t=177772 UIlib Lua
+    https://forum.cockos.com/showthread.php?t=165040 Default 5.0 Nitpicky
+    https://forum.cockos.com/showthread.php?t=186637  RadialMenu
+    Walter window manager - definition of visual layout and appearance: https://www.reaper.fm/sdk/walter/walter.php.
+
+# helgobox
+
+https://docs.helgoboss.org/helgobox/introduction.html
+https://github.com/helgoboss/helgobox
+https://github.com/helgoboss/helgobox/blob/master/ARCHITECTURE.adoc
+
+Playtime  https://www.helgoboss.org/projects/playtime
+- playtime-api Playtime data structures for describing e.g. clip engine presets
+- playtime-clip-engine` |Playtime Clip Engine for playing/recording clips (currently a private submodule).
+  Is a workspace member because that makes it much simpler to use the same dependency versions everywhere.
+- playtime-clip-engine-placeholder` |A placeholder crate for the Playtime Clip Engine. Users who don't have access to
+  the Playtime Clip Engine submodule, must rename this directory to `playtime-clip-engine` in order to be able to build
+  ReaLearn without feature `playtime`.
+
+
+ReaLearn is built in a modular fashion.
+- main: The main module of ReaLearn which contains most of its code.
+- api: This contains the data structures for ReaLearn presets. Its main use case is _ReaLearn Script_,
+  a way to build mappings with the Lua scripting language.
+- swell-ui: A tiny custom-written GUI framework based on the Win32 API (Windows) and Cockos SWELL (macOS, Linux) respectively.
+- reaper-rs: Rust bindings to the REAPER API (which itself is based on C and partially C++).
+- helgoboss-learn: A library which contains reusable and DAW-agnostic code related to MIDI/OSC-learn functionality.
+  Some of ReaLearn's basic notions such as _Source_, _Glue_ (still called _Mode_ in most parts of the codebase) and _Target_ are defined in this DAW-neutral module.
+- helgoboss-midi: A general-purpose and carefully designed library for dealing with MIDI messages according to the MIDI 1.0 specification.
+
+
+# end

@@ -1,0 +1,4 @@
+
+C:\Dev\Reaper\reaper-sdk\WDL\eel2\scripts
+
+C:\Users\cepth\AppData\Roaming\REAPER\Scripts\ReaTeam Scripts\Development\Scythe library v3

@@ -1,4 +1,6 @@
 
+:: My builder for test extension.
+
 cls
 echo off
 
@@ -11,6 +13,6 @@ cmake ..\..
 :: build stuff
 rem cmake -E environment
 cmake --build .
-copy C:\Dev\Misc\ReaperLab\reaper_test_extension\build\win\Debug\reaper_test_extension.dll  C:\Users\cepth\AppData\Roaming\REAPER\UserPlugins
+copy %DEV_PATH%\Misc\ReaperLab\reaper_test_extension\build\win\Debug\reaper_test_extension.dll  C:\Users\cepth\AppData\Roaming\REAPER\UserPlugins
 popd
 
