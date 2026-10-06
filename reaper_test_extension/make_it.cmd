@@ -7,7 +7,7 @@ echo off
 :: cmake stuff
 mkdir build\win
 pushd build\win
-set REAPER_SDK_PATH=C:\Dev\Reaper\reaper-sdk
+set REAPER_SDK_PATH=C:\Dev\Misc\ReaperLab\vendor\reaper-sdk
 cmake ..\..
 
 :: build stuff
