@@ -13,6 +13,48 @@ Inline MIDI Editing: Press E on your keyboard to open the MIDI inline editor, al
 Navigator Window: If you need a bird's-eye overview of your whole project, press Ctrl + Alt + V to open the Navigator window, which lets you click and drag to jump around massive sessions
 
 
+
+
+std::stringstream ss;
+ss << "Loaded reaper_test_extension ver:" << __TIME__;// << std::endl;
+_print(ss.str());
+_log(ss.str());
+
+std::string _format2(const char* fmt, ...)
+{
+    // A common C++11 pattern to safely allocate a buffer for snprintf
+    va_list args;
+    va_start(args, fmt);
+    std::vector<char> buf(100);
+
+    std::vsnprintf(buf.data(), buf.size(), fmt, args);
+    va_end(args);
+    return std::string(buf.data(), buf.size());
+}
+
+
+std::string format_string(const char* fmt, ...)
+{
+    // A common C++11 pattern to safely allocate a buffer for snprintf
+    va_list args;
+    va_start(args, fmt);
+    
+    // Determine required size
+    va_list args_copy;
+    va_copy(args_copy, args);
+    int size = std::vsnprintf(nullptr, 0, fmt, args_copy);
+    va_end(args_copy);
+    
+    if (size < 0) { va_end(args); return ""; }
+
+    std::vector<char> buf(size + 1);
+    std::vsnprintf(buf.data(), buf.size(), fmt, args);
+    va_end(args);
+    
+    return std::string(buf.data(), size);
+}
+
+
 # extension authoring
 
 C/C++
