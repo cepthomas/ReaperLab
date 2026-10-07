@@ -131,7 +131,7 @@ void _log(std::string msg)
     char buffer[200];
     std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", local_time);
 
-    std::fstream myfile("C:\\Dev\\Misc\\ReaperLab\\plugin_log.txt", std::ios::app);
+    std::fstream myfile("C:\\Dev\\Misc\\ReaperLab\\extensions\\plugin_log.txt", std::ios::app);
     myfile << buffer << " " << msg << std::endl;
     myfile.close();
 }
