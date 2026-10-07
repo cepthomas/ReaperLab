@@ -61,7 +61,7 @@ extern "C" REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(REAPER_PLUGIN_H
     plugin_register("atexit", (void*)_onExit);
     // or rec->Register("atexit", (void*)_onExit); or GetFunc("plugin_register")->("atexit", (void*)_onExit);
 
-    plugin_register("ext_name", (void*)"reaper_test_extension");
+    plugin_register("ext_name", (void*)"reaper_xyz_extension");
     plugin_register("ext_vendor", (void*)"Ephemera");
     plugin_register("ext_url", (void*)"https://github.com/cepthomas/ReaperLab/blob/main/README.md");
 
@@ -77,7 +77,7 @@ extern "C" REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(REAPER_PLUGIN_H
     _xyz_command_id = (int)(INT_PTR)plugin_register("custom_action", &action);
     _log(_format("Reg command_id:%d", _xyz_command_id));
 
-    _print(_format("Loaded reaper_test_extension %s", __TIME__));
+    _print(_format("Loaded reaper_xyz_extension %s", __TIME__));
 
     return 1;
 }
@@ -117,7 +117,7 @@ void _onExit(void)
 void _print(std::string msg)
 {
     _log(msg);
-    // MessageBox(nullptr, "reaper_test_extension says", buff, 0);
+    // MessageBox(nullptr, "reaper_xyz_extension says", buff, 0);
     msg += "\n";
     ShowConsoleMsg(msg.c_str());
 }

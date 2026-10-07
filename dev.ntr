@@ -1,0 +1,113 @@
+# Top
+
+# arrangement
+
+? session view: https://www.youtube.com/watch?v=QENZ0_Pywx4
+
+REAPER's arrangement view
+Region Management: Use regions to structure your song. Hold Shift while dragging in the timeline to create a region. You can then drag, reorder, or duplicate these regions to instantly rearrange your entire track.
+Inline MIDI Editing: Press E on your keyboard to open the MIDI inline editor, allowing you to edit MIDI notes and CCs directly in the arrange view without opening a separate piano roll window.
+Navigator Window: If you need a bird's-eye overview of your whole project, press Ctrl + Alt + V to open the Navigator window, which lets you click and drag to jump around massive sessions
+
+https://www.reddit.com/r/Reaper/comments/1qzio4f/my_first_script_itemview_abletonstyle_clip_view/
+https://github.com/novosadand/NVSD_ItemView
+
+
+# other
+
+- https://www.reaper.fm/sdk/reascript/reascript.php
+
+- https://github.com/nikolalkc/LKC-Tools
+
+! https://github.com/NablaTools/Nabla - uses scythe
+
+? MK Slicer
+
+- C:\Dev\Reaper\reaper-sdk\WDL\eel2\scripts
+
+
+# helgobox
+
+https://docs.helgoboss.org/helgobox/introduction.html
+https://github.com/helgoboss/helgobox
+https://github.com/helgoboss/helgobox/blob/master/ARCHITECTURE.adoc
+
+Playtime  https://www.helgoboss.org/projects/playtime
+- playtime-api Playtime data structures for describing e.g. clip engine presets
+- playtime-clip-engine` |Playtime Clip Engine for playing/recording clips (currently a private submodule).
+  Is a workspace member because that makes it much simpler to use the same dependency versions everywhere.
+- playtime-clip-engine-placeholder` |A placeholder crate for the Playtime Clip Engine. Users who don't have access to
+  the Playtime Clip Engine submodule, must rename this directory to `playtime-clip-engine` in order to be able to build
+  ReaLearn without feature `playtime`.
+
+ReaLearn is built in a modular fashion.
+- main: The main module of ReaLearn which contains most of its code.
+- api: This contains the data structures for ReaLearn presets. Its main use case is _ReaLearn Script_,
+  a way to build mappings with the Lua scripting language.
+- swell-ui: A tiny custom-written GUI framework based on the Win32 API (Windows) and Cockos SWELL (macOS, Linux) respectively.
+- reaper-rs: Rust bindings to the REAPER API (which itself is based on C and partially C++).
+- helgoboss-learn: A library which contains reusable and DAW-agnostic code related to MIDI/OSC-learn functionality.
+  Some of ReaLearn's basic notions such as _Source_, _Glue_ (still called _Mode_ in most parts of the codebase) and _Target_ are defined in this DAW-neutral module.
+- helgoboss-midi: A general-purpose and carefully designed library for dealing with MIDI messages according to the MIDI 1.0 specification.
+
+
+# gui
+
+! RealmGui - biiiig - seems to be main active
+https://codeberg.org/cfillion/reaimgui
+https://forum.cockos.com/showthread.php?t=250419
+
+X scythe - on hiatus/stale
+https://github.com/jalovatt/scythe
+C:\Users\cepth\AppData\Roaming\REAPER\Scripts\ReaTeam Scripts\Development\Scythe library v3
+
+X https://github.com/jalovatt/Lokasenna_GUI
+
+? Other UI (https://sws-extension.org/ Needed)
+    https://forum.cockos.com/showthread.php?t=177772 UIlib Lua
+    https://forum.cockos.com/showthread.php?t=165040 Default 5.0 Nitpicky
+    https://forum.cockos.com/showthread.php?t=186637  RadialMenu
+    Walter window manager - definition of visual layout and appearance: https://www.reaper.fm/sdk/walter/walter.php.
+
+
+# snippets - old
+
+std::stringstream ss;
+ss << "Loaded reaper_xyz_extension ver:" << __TIME__;// << std::endl;
+_print(ss.str());
+_log(ss.str());
+
+std::string _format2(const char* fmt, ...)
+{
+    // A common C++11 pattern to safely allocate a buffer for snprintf
+    va_list args;
+    va_start(args, fmt);
+    std::vector<char> buf(100);
+    std::vsnprintf(buf.data(), buf.size(), fmt, args);
+    va_end(args);
+    return std::string(buf.data(), buf.size());
+}
+
+
+std::string format_string(const char* fmt, ...)
+{
+    // A common C++11 pattern to safely allocate a buffer for snprintf
+    va_list args;
+    va_start(args, fmt);
+    
+    // Determine required size
+    va_list args_copy;
+    va_copy(args_copy, args);
+    int size = std::vsnprintf(nullptr, 0, fmt, args_copy);
+    va_end(args_copy);
+    
+    if (size < 0) { va_end(args); return ""; }
+
+    std::vector<char> buf(size + 1);
+    std::vsnprintf(buf.data(), buf.size(), fmt, args);
+    va_end(args);
+    
+    return std::string(buf.data(), size);
+}
+
+# end

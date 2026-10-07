@@ -426,5 +426,5 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
-/reaper_test_extension/build
+/extensions/build
 /plugin_log.txt

@@ -1,4 +1,6 @@
 
+-- Minimal lua script
+
 -- Scripts go in %APPDATA%\REAPER\Scripts\User
 
 -- function returning a single (scalar) value:
@@ -7,6 +9,8 @@ sec = reaper.parse_timestr("1:12")
 reaper.ShowConsoleMsg('>>>>>'..sec)
 
 
+
+-- I think this is Lokasenna_GUI stuff??
 -- local GUI = require("gui.core")
 
 -- local window = GUI.createWindow({
