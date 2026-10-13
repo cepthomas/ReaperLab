@@ -80,6 +80,8 @@ Index of this file:
 - [SECTION] Example App: Assets Browser / ShowExampleAppAssetsBrowser()
 --]]
 
+reaper.ShowConsoleMsg('Well, hello from xyz_ui_plugin.lua!!!')
+
 package.path = reaper.ImGui_GetBuiltinPath() .. '/?.lua'
 local ImGui = require 'imgui' '0.10'
 
@@ -88,10 +90,12 @@ local FLT_MIN, FLT_MAX = ImGui.NumericLimits_Float()
 local DBL_MIN, DBL_MAX = ImGui.NumericLimits_Double()
 local IMGUI_VERSION, IMGUI_VERSION_NUM, REAIMGUI_VERSION = ImGui.GetVersion()
 
-local demo = {
+local demo =
+{
   open = true,
 
-  menu = {
+  menu =
+  {
     enabled = true,
     f = 0.5,
     n = 0,
@@ -112,7 +116,9 @@ local demo = {
   unsaved_document  = false,
   no_docking        = false,
 }
-local show_app = {
+
+local show_app =
+{
   -- Examples Apps (accessible from the "Examples" menu)
   -- main_menu_bar      = false,
   assets_browser     = false,

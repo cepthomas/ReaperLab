@@ -13,11 +13,14 @@
 #include "reaper_plugin.h"
 #include "reaper_plugin_functions.h"
 
+// Shut up localtime warning.
+#define _CRT_SECURE_NO_WARNINGS
 
 // Data.
 REAPER_PLUGIN_HINSTANCE _hInstance = 0; // used for dialogs, if any
 static reaper_plugin_info_t* _rec = nullptr;
-static int _xyz_command_id = 0;
+static int _xyz_command_id1 = 0;
+static int _xyz_command_id2 = 0;
 
 // Forward refs.
 static bool _runCommand(int command, int flag);
@@ -43,7 +46,8 @@ extern "C" REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(REAPER_PLUGIN_H
             // Unregister on unload.
             plugin_register("-hookcommand2", (void *)_hookCommand2);
             // custom_action unregistration uses "-custom_action" with the registered struct/id.
-            plugin_register("-custom_action", (void *)_xyz_command_id);
+            plugin_register("-custom_action", (void *)(uintptr_t)_xyz_command_id1);
+            plugin_register("-custom_action", (void *)(uintptr_t)_xyz_command_id2);
             _rec = nullptr;
         }
         return 0;
@@ -55,29 +59,27 @@ extern "C" REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(REAPER_PLUGIN_H
     _rec = rec;
     REAPERAPI_LoadAPI(rec->GetFunc);
     _log(">>>>>>> good to go >>>>>>>>>");
+    _print(_format("Loaded reaper_xyz_extension %s", __TIME__));
 
     ///// Init my reaper command handlers.
     plugin_register("hookcommand", _runCommand);
     plugin_register("atexit", (void*)_onExit);
     // or rec->Register("atexit", (void*)_onExit); or GetFunc("plugin_register")->("atexit", (void*)_onExit);
-
+    // Hook for custom actions.
+    plugin_register("hookcommand2", (void *)_hookCommand2);
+    // Optional info.
     plugin_register("ext_name", (void*)"reaper_xyz_extension");
     plugin_register("ext_vendor", (void*)"Ephemera");
     plugin_register("ext_url", (void*)"https://github.com/cepthomas/ReaperLab/blob/main/README.md");
 
-    ///// Init my custom action/commands.
-    plugin_register("hookcommand2", (void *)_hookCommand2);
-    custom_action_register_t action =
-    {
-        0,                  // uniqueSectionId (0 = Main section)
-        "XYZ_ACTION_ID",    // idStr (must be unique)
-        "XYZ Action",       // menu name
-        nullptr
-    };
-    _xyz_command_id = (int)(INT_PTR)plugin_register("custom_action", &action);
-    _log(_format("Reg command_id:%d", _xyz_command_id));
+    ///// Init my custom action/commands { 0 = Main section, unique idstr, menu text }
+    custom_action_register_t action1 = { 0, "XYZ_ACTION_ID1", "XYZ: Action1", nullptr };
+    _xyz_command_id1 = (int)(INT_PTR)plugin_register("custom_action", &action1);
+    _log(_format("Reg command_id:%d", _xyz_command_id1));
 
-    _print(_format("Loaded reaper_xyz_extension %s", __TIME__));
+    custom_action_register_t action2 = { 0, "XYZ_ACTION_ID2", "XYZ: Action2", nullptr };
+    _xyz_command_id2 = (int)(INT_PTR)plugin_register("custom_action", &action2);
+    _log(_format("Reg command_id:%d", _xyz_command_id2));
 
     return 1;
 }
@@ -88,12 +90,21 @@ extern "C" REAPER_PLUGIN_DLL_EXPORT int REAPER_PLUGIN_ENTRYPOINT(REAPER_PLUGIN_H
 bool _hookCommand2(KbdSectionInfo* sec, int commandId, int val, int valhw, int relmode, HWND hwnd)
 {
     _log(_format("_hookCommand2 commandId:%d val:%d hwnd:%d", commandId, val, hwnd));
-    if (commandId == _xyz_command_id)
+
+    if (commandId == _xyz_command_id1)
     {
         // Do your custom action work here
-        _print("Hello from XYX Action!");
+        _print("Hello from XYX Action 11111!");
         return true; // Handled
     }
+    else if (commandId == _xyz_command_id2)
+    {
+        // Do your custom action work here
+        _print("Hello from XYX Action 22222!");
+        return true; // Handled
+    }
+
+
     return false; // Not handled
 }
 
@@ -126,13 +137,9 @@ void _print(std::string msg)
 void _log(std::string msg)
 {
     // Write to file.
-    time_t now = std::time(0);
-    std::tm* local_time = std::localtime(&now);
-    char buffer[200];
-    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", local_time);
-
+    std::time_t now = std::time(nullptr);
     std::fstream myfile("C:\\Dev\\Misc\\ReaperLab\\extensions\\plugin_log.txt", std::ios::app);
-    myfile << buffer << " " << msg << std::endl;
+    myfile << now << " " << msg << std::endl;
     myfile.close();
 }
 

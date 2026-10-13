@@ -6,7 +6,7 @@ project(reaper_xyz_extension VERSION 0.1.0 LANGUAGES CXX)
 message(STATUS "sdk path: $ENV{REAPER_SDK_PATH}")
 
 set(SOURCES
-    main.cpp
+    reaper_xyz_extension.cpp
     )
 
 # If we are not on Windows, we need to use SWELL
