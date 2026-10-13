@@ -1,6 +1,8 @@
 
 :: Copy scripts to expected dir.
 
+exit
+
 cls
 echo off
 
