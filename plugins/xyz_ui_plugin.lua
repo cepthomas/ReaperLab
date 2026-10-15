@@ -1,10 +1,12 @@
 -- >>> From ReaImGui_Demo.lua
 -- Lua/ReaImGui port of Dear ImGui's C++ demo code (v1.92.1)
 
+--------------------------- utils ----------------------------------------
 local function _tell(o)
   reaper.ShowConsoleMsg('HEY:'..tostring(o)..'\n')
 end
 
+---------------------------- data ----------------------------------------
 _tell('Well, hello from xyz_ui_plugin.lua!!!')
 
 package.path = reaper.ImGui_GetBuiltinPath() .. '/?.lua'
@@ -61,6 +63,33 @@ window_flags = window_flags | ImGui.WindowFlags_UnsavedDocument
 
 
 local widgets = {}
+widgets.basic =
+{
+  clicked = 0,
+  check   = true,
+  radio   = 0,
+  counter = 0,
+  curitem = 0,
+  str0    = 'Hello, world!',
+  str1    = '',
+  vec4a   = reaper.new_array({0.10, 0.20, 0.30, 0.44}),
+  i0      = 123,
+  i1      = 50,
+  i2      = 42,
+  i3      = 128,
+  i4      = 0,
+  d0      = 999999.00000001,
+  d1      = 1e10,
+  d2      = 1.00,
+  d3      = 0.0067,
+  d4      = 0.123,
+  d5      = 0.0,
+  angle   = 0.0,
+  elem    = 1,
+  col1    = 0xff0033,   -- 0xRRGGBB
+  col2    = 0x66b2007f, -- 0xRRGGBBAA
+  listcur = 0,
+}
 
 -- local ctx = ImGui.CreateContext('XYZ-ui-demo')
 
@@ -98,10 +127,12 @@ local ctx = ImGui.CreateContext('My script')
 local function loop()
   demo.PushStyle(ctx)
   demo.ShowDemoWindow(ctx)
+
   if ImGui.Begin(ctx, 'Dear ImGui Style Editor') then
     demo.ShowStyleEditor(ctx)
     ImGui.End(ctx)
   end
+  
   demo.PopStyle(ctx)
   reaper.defer(loop)
 end
@@ -111,7 +142,7 @@ reaper.defer(loop)
 
 
 
--- This file can be imported in other scripts to help during development:
+---------------------------- loop ----------------------------------------
 
 -- local demo = require 'ReaImGui_Demo'
 local ctx = ImGui.CreateContext('XYZ-ui-demo')
@@ -120,67 +151,69 @@ local ctx = ImGui.CreateContext('XYZ-ui-demo')
 
 local function loop()
   -- demo.PushStyle(ctx)
-  demo.ShowDemoWindow(ctx)
+
   if ImGui.Begin(ctx, 'XYZ=================', true, window_flags) then
-    demo.ShowDemoWindow(ctx)
+    demo.First()
     ImGui.End(ctx)
+  else
+    _tell('oh oh')
   end
+
   -- demo.PopStyle(ctx)
   reaper.defer(loop)
+
 end
 
 reaper.defer(loop)
 
 
-
-
--- function demo.loop()
-
---   _tell('30')
---   demo.DemoWindowWidgetsBasic()
---   _tell('80')
-
---   -- demo.PushStyle()
---   -- demo.open = demo.ShowDemoWindow(true)
---   -- demo.PopStyle()
-
---   -- if demo.open then
---   --   _tell('83')
---   --   reaper.defer(demo.loop)
---   --   _tell('84')
---   -- end
--- end
-
-
-
--- if select(2, reaper.get_action_context()) == debug.getinfo(1, 'S').source:sub(2) then
---   -- show global storage in the IDE for convenience
 --   _G.demo    = demo
 --   _G.widgets = widgets
---   -- _G.layout  = layout
---   -- _G.popups  = popups
---   -- _G.tables  = tables
---   -- _G.misc    = misc
---   -- _G.app     = app
--- end
 
 
-
--- ===================================================================================
--- ===================================================================================
--- ===================================================================================
-
--- In window "XYZ=================": Missing End()
-
---   bool my_tool_is_active = false; if (ImGui.Button("Open")) my_tool_is_active = true; [...] if (my_tool_is_active) Begin("My Tool", &my_tool_is_active) { [...] } End();
-
-----------------------------------------------------------------------------------
-function demo.DemoWindowWidgetsBasic()
+---------------------------- first ---------------------------------------
+function demo.First()
   local rv
 
-  _tell('200')
+  -- _tell('200')
 
-  if not ImGui.TreeNode(ctx, 'Basic') then return end
+  -- if not ImGui.TreeNode(ctx, 'Basic') then return end
+
+  ImGui.Text(ctx, '111111111')
+
+  ImGui.SeparatorText(ctx, 'First ========== XYZ')
+
+
+  if ImGui.Button(ctx, 'Button') then
+    widgets.basic.clicked = widgets.basic.clicked + 1
+  end
+
+  if widgets.basic.clicked & 1 ~= 0 then
+    ImGui.SameLine(ctx)
+    ImGui.Text(ctx, 'Thanks for clicking me!')
+  end
+
+  -- _tell('250')
+
+  rv, widgets.basic.check = ImGui.Checkbox(ctx, 'checkbox', widgets.basic.check)
+
+  rv, widgets.basic.radio = ImGui.RadioButtonEx(ctx, 'radio a', widgets.basic.radio, 0); ImGui.SameLine(ctx)
+  rv, widgets.basic.radio = ImGui.RadioButtonEx(ctx, 'radio b', widgets.basic.radio, 1); ImGui.SameLine(ctx)
+  rv, widgets.basic.radio = ImGui.RadioButtonEx(ctx, 'radio c', widgets.basic.radio, 2)
+
+  ImGui.AlignTextToFramePadding(ctx)
+  ImGui.TextLinkOpenURL(ctx, 'Hyperlink', 'https://forum.cockos.com/showthread.php?t=250419')
+
+end
+
+
+---------------------------- basic ---------------------------------------
+function demo.Basic()
+  local rv
+
+  -- _tell('200')
+
+  -- if not ImGui.TreeNode(ctx, 'Basic') then return end
 
   if not widgets.basic then
     widgets.basic =
@@ -212,7 +245,7 @@ function demo.DemoWindowWidgetsBasic()
     }
   end
 
-  ImGui.SeparatorText(ctx, 'General')
+  ImGui.SeparatorText(ctx, 'General XYZ')
 
   if ImGui.Button(ctx, 'Button') then
     widgets.basic.clicked = widgets.basic.clicked + 1
@@ -223,7 +256,7 @@ function demo.DemoWindowWidgetsBasic()
     ImGui.Text(ctx, 'Thanks for clicking me!')
   end
 
-  _tell('250')
+  -- _tell('250')
 
   rv,widgets.basic.check = ImGui.Checkbox(ctx, 'checkbox', widgets.basic.check)
 
@@ -247,7 +280,7 @@ function demo.DemoWindowWidgetsBasic()
     ImGui.PopStyleColor(ctx, 3)
     ImGui.PopID(ctx)
   end
-  _tell('260')
+  -- _tell('260')
 
   -- Use AlignTextToFramePadding() to align text baseline to the baseline of framed widgets elements
   -- (otherwise a Text+SameLine+Button sequence will have the text a little too high by default!)
@@ -269,7 +302,7 @@ function demo.DemoWindowWidgetsBasic()
   ImGui.PopItemFlag(ctx)
   ImGui.SameLine(ctx)
   ImGui.Text(ctx, ('%d'):format(widgets.basic.counter))
-  _tell('280')
+  -- _tell('280')
 
   ImGui.Button(ctx, 'Tooltip')
   ImGui.SetItemTooltip(ctx, 'I am a tooltip')
@@ -301,7 +334,7 @@ function demo.DemoWindowWidgetsBasic()
 
     ImGui.InputDoubleN(ctx, 'input reaper.array', widgets.basic.vec4a)
   end
-  _tell('290')
+  -- _tell('290')
 
   ImGui.SeparatorText(ctx, 'Drags')
 
@@ -321,7 +354,7 @@ function demo.DemoWindowWidgetsBasic()
   end
 
   ImGui.SeparatorText(ctx, 'Sliders')
-  _tell('300')
+  -- _tell('300')
 
   do
     rv,widgets.basic.i4 = ImGui.SliderInt(ctx, 'slider int', widgets.basic.i4, -1, 3)
@@ -345,7 +378,7 @@ function demo.DemoWindowWidgetsBasic()
   end
 
   ImGui.SeparatorText(ctx, 'Selectors/Pickers')
-  _tell('310')
+  -- _tell('310')
 
   do
     rv,widgets.basic.col1 = ImGui.ColorEdit3(ctx, 'color 1', widgets.basic.col1)
@@ -367,7 +400,7 @@ function demo.DemoWindowWidgetsBasic()
       'Using the simplified one-liner Combo API here.\n\z
        Refer to the "Combo" section below for an explanation of how to use the more flexible and general BeginCombo/EndCombo API.')
   end
-  _tell('320')
+  -- _tell('320')
 
   do
     -- Using the _simplified_ one-liner ListBox() api here
@@ -388,18 +421,19 @@ function demo.DemoWindowWidgetsBasic()
   --     ImGui.Text(ctx, 'This will be displayed only once.')
   -- end
 
-  _tell('340')
+  -- _tell('340')
 
-  ImGui.TreePop(ctx)
+  -- ImGui.TreePop(ctx)
 end
 
 
 ----------------------------------------------------------------------------------
 function demo.DemoWindowWidgetsProgressBars()
-  if not ImGui.TreeNode(ctx, 'Progress Bars') then return end
+  -- if not ImGui.TreeNode(ctx, 'Progress Bars') then return end
 
   if not widgets.progress_bars then
-    widgets.progress_bars = {
+    widgets.progress_bars =
+    {
       progress     = 0.0,
       progress_dir = 1,
     }

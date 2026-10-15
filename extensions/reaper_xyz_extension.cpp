@@ -1,26 +1,25 @@
+// Shut up localtime warning.
+#define _CRT_SECURE_NO_WARNINGS
 #define REAPERAPI_IMPLEMENT
 
 #include <windows.h>
-#include <cstdlib>
 #include <ctime>
 #include <cstdio>
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <vector>
+#include <chrono>
+#include <cstdarg>
 
 #include "reaper_plugin.h"
 #include "reaper_plugin_functions.h"
-
-// Shut up localtime warning.
-#define _CRT_SECURE_NO_WARNINGS
 
 // Data.
 REAPER_PLUGIN_HINSTANCE _hInstance = 0; // used for dialogs, if any
 static reaper_plugin_info_t* _rec = nullptr;
 static int _xyz_command_id1 = 0;
 static int _xyz_command_id2 = 0;
+static std::string _log_fn = "C:\\Dev\\Misc\\ReaperLab\\extensions\\plugin_log.txt";
 
 // Forward refs.
 static bool _runCommand(int command, int flag);
@@ -104,7 +103,6 @@ bool _hookCommand2(KbdSectionInfo* sec, int commandId, int val, int valhw, int r
         return true; // Handled
     }
 
-
     return false; // Not handled
 }
 
@@ -125,10 +123,10 @@ void _onExit(void)
     _log(">>>>>>> adios amigo >>>>>>>>>");
 }
 
+// Write to console. Also logs.
 void _print(std::string msg)
 {
     _log(msg);
-    // MessageBox(nullptr, "reaper_xyz_extension says", buff, 0);
     msg += "\n";
     ShowConsoleMsg(msg.c_str());
 }
@@ -136,13 +134,22 @@ void _print(std::string msg)
 // Log line, adds NL.
 void _log(std::string msg)
 {
+    // Make timestamp.
+    auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() % 1000;
+    auto t = std::time(0);
+    //auto xxx = std::localtime_s();
+    auto now = std::localtime(&t);
+    char buffer[sizeof "9999-12-31 29:59:59.9999"];
+    snprintf(buffer, sizeof(buffer), "%04d-%02d-%02d %02d:%02d:%02d.%lld",
+        now->tm_year + 1900, now->tm_mon + 1, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec, msec);
+
     // Write to file.
-    std::time_t now = std::time(nullptr);
-    std::fstream myfile("C:\\Dev\\Misc\\ReaperLab\\extensions\\plugin_log.txt", std::ios::app);
-    myfile << now << " " << msg << std::endl;
+    std::fstream myfile(_log_fn, std::ios::app);
+    myfile << buffer << " " << msg << std::endl;
     myfile.close();
 }
 
+// General string formatter.
 std::string _format(const char* fmt, ...)
 {
     char buff[100];
